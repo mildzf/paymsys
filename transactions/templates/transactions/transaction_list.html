@@ -1,0 +1,42 @@
+{% extends './_base.html' %}  
+
+{% block title %}Transactions History{% endblock %} 
+
+
+{% block content %} 
+<h1><i class="bi bi-book"></i> Transaction History</h1>
+<hr class="h1">
+<div class="col my-5">
+    {% if account %}
+<p>Showing transaction history for <b>{{ account.client }} - Account Number: {{account.number}}</b></p>
+{% endif %}
+<table class="table table-striped table-sm">
+    <thead class="table-light">
+        <td>ID</td>
+        <td>Date</td>
+        <td>Account</td>
+        <td>Acc #</td>
+        <td>Amount</td>
+        <td>Balance</td>
+        <td>Action</td>
+      </thead>
+    {% for transaction in transactions %} 
+    <tr>
+      <td><a href="{{ transaction.get_absolute_url }}" title="view transaction detail">{{ transaction.id|stringformat:"05d" }}</a></td>
+     <td>{{ transaction.date |date:"SHORT_DATE_FORMAT"}}</td>
+     <td><a href="{{ transaction.account.get_absolute_url }}" title="View account details">{{ transaction.account.number }}</a></td>
+     <td>{{ transaction.account.number }}</td>
+     <td>{{ transaction.amount }}</td>
+     <td>{{transaction.balance_after }}</td>
+     <td><a class="text-decoration-none link-warning" href="{% url 'transactions:receipt' transaction.id  %}" title="generate receipt">receipt</a></td>
+    </tr>
+    </p>
+    {% empty %}
+    <tr><td colspan="5">No transactions as yet. Click <a href="{% url 'accts:search' %}">here</a> to make a payment.</td></tr>
+    {% endfor %}
+  </table>
+
+</div>
+
+{{ block.super }}
+{% endblock %}

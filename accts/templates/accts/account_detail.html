@@ -1,0 +1,39 @@
+{% extends './_base.html' %} 
+
+{% block title %} {% endblock %}  
+
+{% block content %} 
+<h1 class="h2"> {{ account }} </h1> 
+<p><small>created on {{ account.created }}</small></p>
+<hr class="h1">
+<div class="my-2">
+  <span class="badge rounded-pill bg-success"><a href="{% url 'transactions:create' %}?q={{account.id}}" class="link-light h3"><i title="Make payment on account" class="bi bi-wallet2"></i></a></span>
+<span class="badge rounded-pill bg-primary"><a href="{{account.get_update_url}}" class="link-light h3"><i title="edit {{account.name}}" class="bi bi-pencil-square"></i></a></span>
+<span class="badge rounded-pill bg-danger"> <a href="{{ account.get_delete_url }}" class="link-light h3"><i title="delete {{ account.name }}" class="bi bi-trash"></i></a></span>
+<hr>
+<h5 class="card-title"> Transaction history for account. </h5>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Balance After</th>
+          </tr>
+        </thead>
+        <tbody>
+      {% for transaction in account.transactions.all %}
+      <tr>
+        <td><a href="{{ transaction.get_absolute_url }}"> {{ transaction.id|stringformat:"05d" }}</a></td>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.amount }}</td>
+        <td>{{ transaction.balance_after }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No transactions as yet. Click <a href="{% url 'transactions:create' %}?q={{account.id}}">here</a> to make a payment.</td></tr>
+      {% endfor %}
+      </tbody>
+      </table>
+  </div>
+{{ block.super }}
+{% endblock %}

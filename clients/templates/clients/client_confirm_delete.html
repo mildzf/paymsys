@@ -1,0 +1,21 @@
+{% extends './_base.html' %} 
+{% load crispy_forms_tags %}
+
+{% block title %} Delete {{ client }}{% endblock %}  
+
+
+{% block content %}  
+<div class="card mx-auto col-lg-6 border border-0">
+    <div class="card-header">
+        <h3> Delete {{ client }}</h3>
+        <p><small>Are You sure? This cannot be undone!</small></p>
+    </div>
+    <div class="card-body">
+        <form method="post" action="">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="Submit">Yes, Delete it. I'm sure.</button>
+            <button id="cancel" name="cancel" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

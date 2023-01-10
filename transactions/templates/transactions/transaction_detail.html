@@ -1,0 +1,25 @@
+{% extends './_base.html' %}  
+
+{% block title %} {% endblock %} 
+
+
+{% block content %} 
+<h1><i class="bi bi-book"></i> Transaction # {{ transaction.id|stringformat:"05d" }}</h1>
+    <hr class="h1">
+    <div class="hstack gap-3">
+        <div class="bg-light border border-0"><a class="text-decoration-none link-dark" href="{{ transaction.get_receipt }}"><i class="bi bi-receipt"></i> view receipt</a></div>
+      </div>
+    
+    <hr>
+<div class="my-4">
+    <div class="vstack gap-3">
+        <div class="bg-transparent border border-0">Date: <span> </span>{{ transaction.date }}</div>
+        <div class="bg-transparent border border-0">Client: <a href="{{ transaction.account.client.get_absolute_url }}" title="View {{ transaction.account.client }}">{{ transaction.account.client }}</a></div>
+        <div class="bg-transparent border border-0">account: <a href="{{ transaction.account.get_absolute_url }}" title="view {{ transaction.account }}">{{ transaction.account.name }}</a></div>
+        <div class="bg-transparent border border-0 border-bottom">Amount paid: <span class="h3  float-end">${{ transaction.amount }}</span></div>
+        <div class="bg-transparent border border-0"><span class="float-end">New balance: ${{ transaction.account.balance }}</span></div>
+      </div>
+</div>
+
+
+{% endblock %}

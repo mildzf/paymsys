@@ -1,0 +1,37 @@
+{% extends './_base.html' %} 
+
+{% block title %} Client List {% endblock %} 
+
+{% block content %} 
+<div class="hstack gap-3">
+  <div class="bg-light border border-0"><a onclick=history.back() class="link-dark text-decoration-none"><i title="go back" class="bi bi-arrow-left h4"> Back</i></a></div>
+</div>
+<hr>
+<h1> Our Clients</h1>
+    <hr class="h1"> 
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item"><a class="stretched-link link-dark" href="{% url 'clients:create' %}"><i class="bi bi-person-add"></i></a> New Client</li>
+    </ul>
+    <hr>
+<div class="mx-auto">
+     
+    <ul class="list-group list-group-flush">
+      {% for client in clients %}
+      <li class="list-group-item">
+        <ul class="list-group list-group-horizontal">
+          <li class="list-group-item border border-0"><a href="{{ client.get_absolute_url }}" class="stretched-link" title="view {{ client }}"> </a>{{ client }}</li>
+          <li class="list-group-item border border-0">{{ client.address }}</li>
+          <li class="list-group-item border border-0"> <a class="stretched-link text-decoration-none link-success" href="{% url 'accts:create' %}?q={{ client.id}}"><i class="bi bi-plus-lg"></i></a> Add account</li>
+        </ul>
+      </li>
+      {% empty %}
+      <li class="list-group-item">No clients exists in the database. Click <a href="{{ client.get_create_url }}">here</a> to add a new client. </li>
+      {% endfor %}
+    </ul>
+    <div class="card-footer">
+      {{ block.super }}
+    </div>
+  </div>
+
+  
+{% endblock %}
