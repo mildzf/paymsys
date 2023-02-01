@@ -1,10 +1,18 @@
 from django.db import models
 from django.urls import reverse 
+from django.utils.translation import gettext_lazy as _
 
 from accts.models import Account
 
 
 class Transaction(models.Model):
+    class Payment(models.TextChoices):
+        CSH = "CSH", _("Cash")
+        CRD = "CRD", _("Credit/Debit Card")
+        PPL = "PPL", _("PayPal")
+        TRN = "TRN", _("Bank Transfer")
+        OTH = "OTH", _("Other")
+    payment = models.CharField(max_length=3, choices=Payment.choices, default=Payment.CSH)
     account = models.ForeignKey(Account, related_name="transactions", on_delete=models.CASCADE)
     balance_before = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)

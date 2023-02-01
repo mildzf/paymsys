@@ -1,24 +1,21 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse, reverse_lazy
 from django.conf import settings 
 
-from .forms import AccountForm, ClientForm
+from .forms import ClientForm
 from .models import Client
-from accts.models import Account 
-from core.mixins import PageLinksMixin
+from core.views import (StaffListView, StaffCreateView, 
+StaffDeleteView, StaffDetailListView, StaffUpdateView)
 
 
-class ClientListView(LoginRequiredMixin, PageLinksMixin, ListView):
+class ClientListView(StaffListView):
     model = Client
     context_object_name = "clients"
     paginate_by = settings.PAGINATE_BY
 
 
 
-class ClientDetailView(LoginRequiredMixin, SingleObjectMixin, PageLinksMixin, ListView):
+class ClientDetailView(StaffDetailListView):
     paginate_by = 10 
     template_name = 'clients/client_detail.html'
     paginate_by = settings.PAGINATE_BY
@@ -36,7 +33,7 @@ class ClientDetailView(LoginRequiredMixin, SingleObjectMixin, PageLinksMixin, Li
         return self.object.accounts.all()
 
 
-class ClientCreateView(LoginRequiredMixin, CreateView):
+class ClientCreateView(StaffCreateView):
     model = Client 
     form_class = ClientForm 
 
@@ -44,7 +41,7 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         return reverse("clients:detail", kwargs={'pk': self.object.id})
 
 
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
+class ClientUpdateView(StaffUpdateView):
     model = Client 
     form_class = ClientForm 
     template_name = "clients/client_update_form.html"
@@ -53,7 +50,9 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("clients:detail", kwargs={'pk': self.object.id})
 
 
-class ClientDeleteView(LoginRequiredMixin, DeleteView):
+class ClientDeleteView(StaffDeleteView):
     model = Client 
     context_object_name = "client"
     success_url = reverse_lazy("clients:list")
+
+

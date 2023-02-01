@@ -12,12 +12,10 @@ class TransactionForm(forms.ModelForm):
 
     class Meta:
         model = Transaction
-        fields = [ 'account', 'amount']
+        fields = [ 'account', 'payment', 'amount']
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get('pk'):
-            self.base_fields['account'].widget = forms.HiddenInput()
-            self.base_fields['account'].empty_label = "Choose account:"
+        self.base_fields['account'].widget = forms.HiddenInput()
         super(TransactionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'paymentForm'
@@ -27,8 +25,9 @@ class TransactionForm(forms.ModelForm):
             Fieldset(
                 '',
                 Field('account', css_class="form-control mb-3"),
+                Field('payment', style="max-width: 100px", placeholder="Payment type", css_class="form-control mb-3 border border-dark border-2 border-0 border-bottom"),
                 'balance_before',
-                Field('amount', label='', placeholder='Enter payment amount', css_class="mb-4")
+                Field('amount', label='', placeholder='Enter payment amount', css_class="mb-4 border border-dark border-2  border-0 border-bottom border-radius"),
             ),
             Submit('submit', 'Make Payment', css_class='btn btn-success'),
         )

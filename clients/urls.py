@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (ClientListView, ClientDetailView, ClientCreateView, 
 ClientUpdateView, ClientDeleteView)
 
+
 app_name='clients'
 
 urlpatterns = [

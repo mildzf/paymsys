@@ -1,0 +1,16 @@
+{% extends './_base.html' %} 
+
+{% block title %}{{ block.super }} - Charge accounts {% endblock %} 
+
+{% block content %} 
+<h1 class="h2"> Charge Accounts</h1> 
+<hr class="h1">
+<form method="post" class="col-md-8 mt-4">
+    {% csrf_token %} 
+    <div class="form-row clearfix">
+       <button type="submit" class="btn btn-danger"> Update Balances</button>
+      </div>
+     
+    </form>
+</form>
+{% endblock %}

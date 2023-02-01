@@ -1,29 +1,26 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, CreateView, DeleteView, ListView, UpdateView
-from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse, reverse_lazy
 from django.db.models import Q
 from django.conf import settings 
 from django.shortcuts import get_object_or_404 
 
+
 from .forms import AccountForm
 from .models import Account
 from clients.models import Client 
 from transactions.models import Transaction
-from core.mixins import PageLinksMixin
+from core.views import (StaffCreateView, StaffDeleteView, 
+StaffDetailView, StaffListView, StaffUpdateView, StaffDetailListView)
 
 
-class AccountListView(LoginRequiredMixin, PageLinksMixin, ListView):
+class AccountListView(StaffListView):
     model = Account 
     context_object_name = "accounts"
-    paginate_by = settings.PAGINATE_BY
 
 
-class AccountSearchView(LoginRequiredMixin, PageLinksMixin, ListView):
+class AccountSearchView(StaffListView):
     model = Account 
     context_object_name = "accounts"
     template_name = "accts/search.html"
-    paginate_by = settings.PAGINATE_BY
     
     def get_queryset(self):
         query = self.request.GET.get('q', None)
@@ -38,10 +35,8 @@ class AccountSearchView(LoginRequiredMixin, PageLinksMixin, ListView):
             return accounts   
         return []
 
-class AccountDetailView(LoginRequiredMixin, SingleObjectMixin, PageLinksMixin, ListView):
-    paginate_by = 10
+class AccountDetailView(StaffDetailListView):
     template_name = "accts/account_detail.html"
-    paginate_by = settings.PAGINATE_BY
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=Account.objects.all())
@@ -56,7 +51,7 @@ class AccountDetailView(LoginRequiredMixin, SingleObjectMixin, PageLinksMixin, L
         return self.object.transactions.all()
 
 
-class AccountCreateView(LoginRequiredMixin, CreateView):
+class AccountCreateView(StaffCreateView):
     model = Account 
     form_class = AccountForm
     
@@ -68,7 +63,7 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
         acc_no = self.request.GET.get('q', None)
         if acc_no:
             client = get_object_or_404(Client, pk=acc_no)
-            initial['client'] = client.id
+            initial['owner'] = client.id
         return initial
     
     def get_context_data(self, *args, **kwargs):
@@ -79,7 +74,7 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
             context['client'] = client
         return context
 
-class AccountUpdateView(LoginRequiredMixin, UpdateView):
+class AccountUpdateView(StaffUpdateView):
     model = Account
     form_class = AccountForm
     template_name = "accts/account_update_form.html"
@@ -88,6 +83,8 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('accts:detail', kwargs={'pk':self.object.id})
 
 
-class AccountDeleteView(LoginRequiredMixin, DeleteView):
+class AccountDeleteView(StaffDeleteView):
     model = Account 
-    success_url = reverse_lazy('accts:list')
+
+    def get_success_url(self):
+        return reverse('clients:detail', kwargs={'pk':self.object.owner.id})

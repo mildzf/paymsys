@@ -3,17 +3,14 @@
 {% block title %} {% endblock %} 
 
 {% block content %} 
-<div class="hstack gap-3">
-  <div class="bg-light border border-0"><a onclick=history.back() class="link-dark text-decoration-none"><i title="go back" class="bi bi-arrow-left h4"> Back</i></a></div>
-</div>
-<hr>
+
+
 <h1> {{ client }} </h1> 
     <p><small>created on {{ client.created }}</small></p>
     <hr class="h1">
     <div class="hstack gap-3">
       <div class="bg-light border border-0"><a href="{{client.get_update_url}}" class="link-dark text-decoration-none"><i title="edit {{client}}" class="bi bi-pencil-square h4"></i> Edit</a></div>
       <div class="bg-light border border-0"><a href="{{ client.get_delete_url }}" class="link-dark text-decoration-none"><i title="delete {{client}}" class="bi bi-trash h4"></i> Delete</a></div>
-   
     </div>
 <hr>
 <div class="my-3">
@@ -30,7 +27,7 @@
       <h5 class="card-title">Accounts for {{ client }}</h5>
       <ul class="list-group list-group-flush">
         {% for account in client.accounts.all %}
-        <li class="list-group-item"> <a href="{{ account.get_absolute_url }}">{{ account.name }}</a></li>
+        <li class="list-group-item"> <a href="{{ account.get_absolute_url }}">{{ account.get_model_display }} - {{ account.serial_number}}</a></li>
         {% empty %} 
         <li class="list-group-item">No account exists for this user. Click <a href="{% url 'accts:create' %}?q={{ client.id }}">here</a> to create one.</li>
         {% endfor %}

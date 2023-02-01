@@ -11,28 +11,31 @@ class AccountManager(models.Manager):
         return self.filter(is_active=True)
 
 class Account(models.Model):
-    client = models.ForeignKey(Client, related_name="accounts", on_delete=models.CASCADE)
-    number = models.CharField(max_length=50, unique=True)
-    name = models.CharField(max_length=200)
-    class TypeChoices(models.TextChoices):
-        RCP=  "RCP", _("Recurring payment")
-        LAY = "LAY", _("Layaway")
-        OTP = "OTP", _("One time payment")
-    acc_type = models.CharField(max_length=3, choices=TypeChoices.choices, default=TypeChoices.RCP)
+    owner = models.ForeignKey(Client, related_name="accounts", null=True, on_delete=models.SET_NULL)
+    serial_number = models.CharField(max_length=50)
+    class ModelChoices(models.TextChoices):
+        LTE = "LTE", _("FireTV Stick Lite")
+        REG = "REG", _("FireTV Stick")
+        F4K = "F4K", _("FireTV Stick 4K")
+        MAX = "MAX", _("FireTV Stick 4k Max")
+        CUB = "CUB", _("FireTV Cube")
+        OMN = "OMN", _("FireTV Omni Series Smart TV")
+        OTH = "OTH", _("Other device")
+    model = models.CharField(max_length=3, choices=ModelChoices.choices, default=ModelChoices.REG)
     service_fee = models.DecimalField(max_digits=6, decimal_places=2)
-    description = models.TextField()
-    balance = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    last_payment = models.DateField(blank=True, null=True) 
     created = models.DateTimeField(auto_now_add=True)
-    last_payment = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
-    is_current = models.BooleanField(default=True)
+    
     objects = AccountManager()
 
     class Meta:
-        ordering = ['-last_payment', ]
+        ordering = ('-last_payment',)
+        verbose_name = "FireTV Account"
 
     def __str__(self):
-        return f"{self.client} - {self.name} - {self.number}"
+        return f"{self.get_model_display()}"
 
     def get_absolute_url(self):
         return reverse('accts:detail', kwargs={'pk': self.pk})
@@ -51,4 +54,9 @@ class Account(models.Model):
 
     def get_transaction_history(self):
         return reverse('transactions:list', kwargs={'pk': self.pk})
+
+
+
+
+    
 

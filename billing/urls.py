@@ -1,9 +1,11 @@
 from django.urls import path 
 
-from .views import InvoiceDetailView 
+from .views import InvoicingView
 
 app_name="billing"
 
 urlpatterns = [
-    path("<int:pk>/", InvoiceDetailView.as_view(), name="detail"),
+    path("new/", InvoicingView.as_view(), name="create"),
+    
+    
 ]

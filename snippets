@@ -1,0 +1,61 @@
+from django.http import HttpResponse
+from django.template.loader import get_template
+from weasyprint import HTML
+import tempfile
+import os
+from django.conf import settings
+from django.core.mail import EmailMessage
+
+
+def send_pdf(request, **kwargs):
+    pk = kwargs.get('pk')
+    client = Client.objects.get(pk=pk)
+    context = {
+        'client': client,
+        'image_path':'file://' + os.path.join(settings.STATIC_ROOT, 'images', 'logo.jpeg' )
+    }
+    html_template = get_template(
+        'transactions/receipt.html')
+    html_string = html_template.render(context)
+    html = HTML(string=html_string)
+    pdf_file = html.write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'filename=invoice.pdf'
+    from_email = 'arycloud7@icloud.com'
+    to_emails = [f"{client.email}"]
+    subject = "Your bill is ready for viewing"
+    message = 'Good day,\n your bill is attached.'
+    email = EmailMessage(subject, body=pdf_file, from_email=settings.EMAIL_HOST_USER, to=to_emails)
+    email.attach("invoice.pdf", pdf_file, "application/pdf")
+    email.content_subtype = "pdf"  # Main content is now text/html
+    email.encoding = 'ISO-8859-1'
+    email.send()
+    return HttpResponse(pdf_file, content_type='application/pdf')
+
+
+from django.conf import settings
+from django.http import HttpResponse
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+
+
+def sendHTMLEmail(request, **kwargs):
+    pk = kwargs.get('pk')
+    client = Client.objects.get(pk=pk)
+    context = {
+        'client': client,
+        'image_path':'file://' + os.path.join(settings.STATIC_ROOT, 'images', 'logo.jpeg' )
+    }
+    html_content = render_to_string("emails.html", context)
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives(
+        "Test HTML Email",
+        text_content,
+        settings.EMAIL_HOST_USER ,
+        ['testemail@gmail.com']
+    )
+    email.attach_alternative(html_content, 'text/html')
+    email.send()
+    return HttpResponse("Email Sent successfully")

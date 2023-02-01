@@ -3,14 +3,15 @@
 {% block title %} Accounts {% endblock %} 
 
 {% block content %}  
+
 <h1 class="m-2"><i class="bi bi-search"></i> Account Search</h1>
     <hr class="h1">
 <div class="mx-auto col">
     
     <form action="" method="get" class="form-control my-4 border border-0 col-lg-6">
       <div class="input-group mb-3 w-75">
-        <input id="search" name="q" type="text" class="form-control border border-0 border-bottom" placeholder="enter client name, account name or number" aria-label="search" aria-describedby="button-addon2">
-        <button class="btn btn-outline-secondary border border-0 border-bottom" type="submit" id="button-addon2"><i class="bi bi-search h3"></i></button>
+        <input id="search" name="q" type="text" autocomplete="off" class="form-control border border-dark border-2  border-0 border-bottom placeholder="enter client name, account name or number" aria-label="search" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary border border-dark border-2  border-0 border-bottom" type="submit" id="button-addon2"><i class="bi bi-search h3"></i></button>
       </div>
     </form>
     {% if accounts %} 
@@ -32,8 +33,10 @@
       <td><a href="{% url 'transactions:create' %}?q={{ account.id }}">Make a payment</a></td>
     </tr>
     {% empty %}
-    <tr><td>No accounts exists in the database. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td></tr>
+    <tr><td colspan="4">No Results. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td></tr>
     {% endfor %}
+    {% else %}
+    <tr><td colspan="4">No accounts exists in the database. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td></tr>
     </tbody>
     </table>
     {% endif %}
