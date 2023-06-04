@@ -12,11 +12,11 @@ html {
 }
 
 
-textarea:hover, 
-input:hover, 
-textarea:active, 
-input:active, 
-textarea:focus, 
+textarea:hover,
+input:hover,
+textarea:active,
+input:active,
+textarea:focus,
 input:focus,
 button:focus,
 button:active,
@@ -29,10 +29,16 @@ button:hover
   display: none;
 }
 
-.form-control {  
+.btn:hover {
+color: #000 !important;
+text-decoration: none;
+}
+
+
+.form-control {
   -webkit-box-shadow: none!important;
   outline: -webkit-focus-ring-color auto 0px!important;
-} 
+}
 
 body {
   margin-bottom: 60px; /* Margin bottom by footer height */

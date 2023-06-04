@@ -1,22 +1,24 @@
-{% extends './_base.html' %} 
+{% extends './_base.html' %}
+
 {% load crispy_forms_tags %}
 
-{% block title %} Create account {% endblock %} 
+{% block title %} Create Account {% endblock %}
 
-{% block content %}  
+{% block content %}
 
 <h1>Create New Account {% if client %} <small class="h4">for {{ client }} {% endif %}</small></h1>
 <hr class="h1">
+
 <div class="col-lg-6 mx-auto my-4">
-    <form method="post">
-        {% csrf_token %} 
-        {{ form|crispy }}
-        <br>
-        <div class="hstack gap-2 col mx-auto">
-            <button type="submit" class="btn btn-success">Create New Account</button>
-            <button type="button" class="btn btn-outline-secondary" onclick="history.back()">Cancel</button>
-        </div>
-    </form>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <br>
+    <div class="d-grid gap-2 col mx-auto">
+      <button type="submit" class="btn btn-success"><i class="bi bi-plus-lg me-2"></i>Create New Account</button>
+      <a href="#" onclick="history.back()" class="btn btn-outline-secondary"><i class="bi bi-x-lg me-2"></i>Cancel</a>
+    </div>
+  </form>
 </div>
 
 {% endblock %}

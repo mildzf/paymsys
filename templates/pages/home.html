@@ -28,11 +28,49 @@
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" media="print" href="{% static 'css/bootstrap-print.css' %}" />
   {% endblock %}
+  <script>
+function updateTime() {
+  var date = new Date();
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+  var meridiem = "AM";
+  if (hours > 12) {
+    hours -= 12;
+    meridiem = "PM";
+  }
+  if (hours === 0) {
+    hours = 12;
+  }
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+
+  var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var day = days[date.getDay()];
+
+  var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var month = months[date.getMonth()];
+
+  var dayOfMonth = date.getDate();
+
+  var year = date.getFullYear();
+
+  var timeString = hours + ":" + minutes + ":" + seconds + " " + meridiem + " " + day + ", " + month + " " + dayOfMonth + ", " + year;
+  document.getElementById("clock").innerHTML = timeString;
+}
+
+setInterval(updateTime, 1000);
+</script>
+
 </head>
 
 <body>
   {% include 'includes/messages.html' %}
-  {% block header %}
+   {% block header %}
   <header class="p-3 mb-3 border-bottom">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -57,7 +95,8 @@
             </li>
             <li><a class="dropdown-item" href="{% url 'account_logout' %}">Sign out</a></li>
           </ul>
-          <!-- 
+
+          <!--
           <form class="form-inline ml-auto">
             <a href="{% url 'account_login' %}" class="btn btn-outline-secondary">Log in</a>
             <a href="{% url 'account_signup' %}" class="btn btn-primary ml-2">Sign up</a>
@@ -67,42 +106,91 @@
       </div>
     </div>
   </header>
-{% endblock %} 
+{% endblock %}
 
   <div class="container mb-5">
-    {% block content %}
+
+{% block content %}
 <h1 class="mt-4"><i class="bi bi-speedometer2"></i> Dashboard</h1>
 <hr class="h1">
+<div class="row justify-content-center">
+    <div class="col-lg-6 mb-2">
+      <form action="{% url 'accts:search' %}" method="get" class="input-group">
+        <input id="search" name="q" type="text" autocomplete="off" class="form-control border border-dark border-0 " placeholder="Enter client name, account name, or number" aria-label="Search" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary border border-dark border-0" type="submit" id="button-addon2"><i class="bi bi-search h3"></i></button>
+      </form>
+    </div>
+  </div>
+<hr class="h1">
+<div id="clock"></div>
+<hr class="h1">
+
 <div class="row mt-5">
-    <div class="card col-sm-4 text-center py-1 border border-light">
-      <p class="h3"><i class="bi bi-wallet2 h1"></i><br>
-        <a href="{% url 'accts:search' %}" class="stretched-link"></a>Make Payment</p>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'accts:search' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-credit-card h1 mb-3"></i>
+                    <h4 class="card-title">Make Payment</h4>
+                </div>
+            </div>
+        </a>
     </div>
-    <div class="card col-sm-4 text-center py-1 border border-light">
-      <p class="h3"><i class="bi bi-people-fill h1"></i><br>
-        <a href="{% url 'accts:list' %}" class="stretched-link"></a>Accounts</p>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'accts:list' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-bank h1 mb-3"></i>
+                    <h4 class="card-title">Accounts</h4>
+                </div>
+            </div>
+        </a>
     </div>
-    <div class="card col-sm-4 text-center py-1 order border-light">
-      <p class="h3"><i class="bi bi-calculator h1"></i><br>
-        <a href="{% url 'transactions:list' %}" class="stretched-link"></a>Transactions</p>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'transactions:list' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-calculator h1 mb-3"></i>
+                    <h4 class="card-title">Transactions</h4>
+                </div>
+            </div>
+        </a>
     </div>
-   
 </div>
 <div class="row mt-5">
-  <div class="card col-sm-4 text-center py-1 border border-light">
-    <p class="h3"><i class="bi bi-people h1"></i><br>
-      <a href="{% url 'clients:list' %}" class="stretched-link"></a>Clients</p>
-  </div>
-  <div class="card col-sm-4 text-center py-1 border border-light">
-    <p class="h3"><i class="bi bi-receipt h1"></i><br>
-      <a href="{% url 'billing:create' %}" class="stretched-link"></a>Billing</p>
-  </div>
-  <div class="card col-sm-4 text-center py-1 border border-light">
-    <p class="h3"><i class="bi bi-person-workspace h1"></i><br>
-      <a href="{% url 'tasks:index' %}" class="stretched-link"></a>Tasks</p>
-  </div>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'clients:list' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-people h1 mb-3"></i>
+                    <h4 class="card-title">Clients</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'billing:create' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-receipt h1 mb-3"></i>
+                    <h4 class="card-title">Billing</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-4 position-relative">
+        <a href="{% url 'tasks:index' %}" class="text-decoration-none stretched-link text-dark">
+            <div class="card border-0 shadow-sm touch-hover-animation">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-calendar-check h1 mb-3"></i>
+                    <h4 class="card-title">Tasks</h4>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 {% endblock content %}
+
   </div>
 
    {% block footer %}
@@ -117,7 +205,7 @@
       </div>
     </footer>
     {% endblock %}
-  
+
 
   {% block javascript %}
   <!-- Bootstrap JavaScript -->

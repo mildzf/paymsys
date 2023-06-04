@@ -1,0 +1,87 @@
+{% extends './_base.html' %}
+
+{% block content %}
+    <h1>User Activity Log</h1>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Model Name</th>
+                    <th>Action Time</th>
+                    <th>Staff Status</th>
+                    <th>Activity Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in object_list %}
+                    <tr>
+                        <td>{{ activity.user }}</td>
+                        <td>{{ activity.model_name }}</td>
+                        <td>{{ activity.action_time }}</td>
+                        <td>
+                            {% if activity.user.is_superuser %}
+                                <span class="badge bg-info">Admin</span>
+                            {% elif activity.is_staff %}
+                                <span class="badge bg-success">Staff</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Non-Staff</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if activity.activity_type == 'login' %}
+                                <span class="badge bg-primary">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    Login
+                                </span>
+                            {% elif activity.activity_type == 'logout' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-box-arrow-left"></i>
+                                    Logout
+                                </span>
+                            {% elif activity.activity_type == 'create' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-plus"></i>
+                                    Create
+                                </span>
+                            {% elif activity.activity_type == 'update' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-pencil"></i>
+                                    Update
+                                </span>
+                            {% elif activity.activity_type == 'delete' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No activity logged.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

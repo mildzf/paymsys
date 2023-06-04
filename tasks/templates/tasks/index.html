@@ -1,19 +1,93 @@
-{% extends './_base.html' %} 
+{% extends './_base.html' %}
 
-{% block title %}{{ block.super }} - All Tasks {% endblock %} 
+{% block title %}{{ block.super }} - All Tasks {% endblock %}
 
-{% block content %} 
+{% block content %}
 <h1>Administrative Tasks</h1>
-<div class="list-group w-auto">
-    <a href="{% url 'tasks:charge' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-      <i class="bi bi-database-add h1"></i>
+<div class="list-group w-auto" title="DANGER!!! be sure you intend to update account balances">
+    <a href="{% url 'tasks:charge' %}" onclick="showConfirmation(event)" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+      <i class="bi bi-battery-charging h1 text-danger"></i>
       <div class="d-flex gap-2 w-100 justify-content-between">
-        <div>
+        <div class="text-danger">
           <h6 class="mb-0">Update Account Balances</h6>
           <p class="mb-0 opacity-75">At a predetermined date in each month, the balances of each active account should be updated <b>BEFORE</b> sending out the bill. </p>
         </div>
       </div>
     </a>
-
   </div>
+
+  <div class="list-group w-auto" title="Save the database as a fixture to prepare for failure.">
+    <a href="{% url 'tasks:database-save' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+      <i class="bi bi-database-add h1 text-success"></i>
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div class="text-success">
+          <h6 class="mb-0">Save database to file</h6>
+          <p class="mb-0 opacity-75">Save the contents of the database to a file as a backup in the event of a failure.  </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+ <div class="list-group w-auto" title="See Staff activity">
+    <a href="{% url 'stats:activity_list' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3 text-success" aria-current="true">
+      <i class="bi bi-clock-history h1"></i>
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div class="">
+          <h6 class="mb-0">Staff Usage</h6>
+          <p class="mb-0 opacity-75">See staff user activity on site. This applies to staff users only. </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+    <div class="list-group w-auto" title="Save Clients information">
+    <a href="{% url 'tasks:clients-save' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3 disabled" aria-current="true">
+      <i class="bi bi-person-fill h1 text-muted"></i>
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div class="">
+          <h6 class="mb-0">Save Clients to CSV file</h6>
+          <p class="mb-0 opacity-75">Save client data to a csv file for viewing in excel or updating the database later.  </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+    <div class="list-group w-auto" title="Save Accounts information">
+    <a href="{% url 'tasks:accts-save' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3 disabled" aria-current="true">
+      <i class="bi bi-bank h1"></i>
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div class="">
+          <h6 class="mb-0">Save Accounts to CSV file</h6>
+          <p class="mb-0 opacity-75">Save Account data to a csv file for viewing in excel or updating the database later.   </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+    <div class="list-group w-auto" title="Save Transaction information">
+    <a href="{% url 'tasks:transactions-save' %}" class="list-group-item list-group-item-action d-flex gap-3 py-3 disabled" aria-current="true">
+      <i class="bi bi-book h1"></i>
+      <div class="d-flex gap-2 w-100 justify-content-between">
+        <div class="">
+          <h6 class="mb-0">Save Transactions to CSV file</h6>
+          <p class="mb-0 opacity-75">Save Transaction data to a csv file for viewing in excel or updating the database later.   </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <script>
+function showConfirmation(event) {
+  event.preventDefault();  // Prevent form submission
+  if (window.confirm("Danger!!!! Do not proceed if you do not intend to update account balances. This cannot be undone!")) {
+    // User clicked OK, perform delete action
+    window.location.href = "/private/tasks/charge/";  // Redirect to delete URL
+  } else {
+    // User clicked Cancel, do nothing
+  }
+}
+</script>
+
+
+
 {% endblock %}

@@ -22,7 +22,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG=True
+
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
@@ -30,7 +30,7 @@ env = environ.Env(
 
 SECRET_KEY = env('SECRET_KEY')
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "mildzf.pythonanywhere.com"]
 CSRF_TRUSTED_ORIGINS = ["https://*.pythonanywhere.com"]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "transactions.apps.TransactionsConfig",
     "billing.apps.BillingConfig",
     "tasks.apps.TasksConfig",
+    "stats.apps.StatsConfig",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
@@ -71,6 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "stats.middleware.user_activity.UserActivityMiddleware",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
@@ -97,25 +99,29 @@ TEMPLATES = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
-    "default": {
-         "ENGINE": "django.db.backends.sqlite3",
-         "NAME": BASE_DIR / "db.sqlite3",
-     }
- }
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': env('DB_NAME'),
-#         'USER': env('DB_USER'),
-#         'PASSWORD': env('DB_PASSWORD'),
-#         'HOST': env('DB_HOST'),
-#     },
-#     'TEST': {
-#           'NAME': 'mildzf$test_metro',
-#     }
-# }
+#     "default": {
+#          "ENGINE": "django.db.backends.sqlite3",
+#          "NAME": BASE_DIR / "db.sqlite3",
+#      }
+#  }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'OPTIONS': {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    },
+    'TEST': {
+          'NAME': 'mildzf$test_mildzf$metro',
+    },
+
+}
 
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
@@ -183,10 +189,10 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 SITE_ID = 1
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "dashboard"
 
 # https://django-allauth.readthedocs.io/en/latest/views.html#logout-account-logout
-ACCOUNT_LOGOUT_REDIRECT_URL = "home"
+ACCOUNT_LOGOUT_REDIRECT_URL = "dashboard"
 
 # https://django-allauth.readthedocs.io/en/latest/installation.html?highlight=backends
 AUTHENTICATION_BACKENDS = (
@@ -202,7 +208,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
 
-PAGINATE_BY = 2
+PAGINATE_BY = 10
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -211,5 +217,4 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = "ontvghbxntktmgls"
-RECIPIENT_ADDRESS =["dev.mildzf@gmail.com",]
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')

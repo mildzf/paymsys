@@ -1,46 +1,70 @@
-{% extends './_base.html' %} 
+{% extends './_base.html' %}
 
-{% block title %} Accounts {% endblock %} 
+{% block title %} Accounts {% endblock %}
 
-{% block content %}  
+{% block content %}
 
-<h1 class="m-2"><i class="bi bi-search"></i> Account Search</h1>
-    <hr class="h1">
-<div class="mx-auto col">
-    
-    <form action="" method="get" class="form-control my-4 border border-0 col-lg-6">
-      <div class="input-group mb-3 w-75">
-        <input id="search" name="q" type="text" autocomplete="off" class="form-control border border-dark border-2  border-0 border-bottom placeholder="enter client name, account name or number" aria-label="search" aria-describedby="button-addon2">
+<div class="container">
+  <h1 class="display-6"><i class="bi bi-search"></i> Account Search</h1>
+  <hr>
+
+  <div class="row justify-content-center my-2">
+    <div class="col-lg-6">
+      <form action="" method="get" class="input-group">
+        <input id="search" name="q" type="text" autocomplete="off" class="form-control border border-dark border-2  border-0 border-bottom " placeholder="Enter client name, account name, or number" aria-label="Search" aria-describedby="button-addon2">
         <button class="btn btn-outline-secondary border border-dark border-2  border-0 border-bottom" type="submit" id="button-addon2"><i class="bi bi-search h3"></i></button>
-      </div>
-    </form>
-    {% if accounts %} 
-    <table class="table table-striped table-hover">
+      </form>
+    </div>
+  </div>
+
+{% if accounts %}
+  <div class="table-responsive">
+    <table class="table table-hover table-striped align-middle">
       <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Name</th>
+          <th scope="col">Account</th>
+          <th scope="col">Owner</th>
           <th scope="col">Balance</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
-    {% for account in accounts %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <td>{{ account }}</td>
-      <td>{{account.balance }}</td>
-      <td><a href="{% url 'transactions:create' %}?q={{ account.id }}">Make a payment</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">No Results. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td></tr>
-    {% endfor %}
-    {% else %}
-    <tr><td colspan="4">No accounts exists in the database. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td></tr>
-    </tbody>
+        {% for account in accounts %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{account }} - {{ account.serial_number }}</td>
+          <td><a href="{{ account.owner.get_absolute_url }}" title="view {{ account.owner }}">{{ account.owner }}</a></td>
+          <td>{{account.balance }}</td>
+          <td><a href="{% url 'transactions:create' %}?q={{ account.id }}" class="btn btn-sm btn-outline-primary">Make a Payment</a></td>
+        </tr>
+        {% endfor %}
+            </tbody>
     </table>
-    {% endif %}
   </div>
+ {% else %}
+ <div class="table-responsive">
+    <table class="table table-hover table-striped align-middle">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Account</th>
+          <th scope="col">Owner</th>
+          <th scope="col">Balance</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4">No Results. Click <a href="{% url 'accts:create' %}">here</a> to create a new account.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+
 
   {{ block.super }}
 {% endblock %}
+

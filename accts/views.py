@@ -1,39 +1,51 @@
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.db.models import Q
-from django.conf import settings 
-from django.shortcuts import get_object_or_404 
+
+from django.shortcuts import get_object_or_404
 
 
 from .forms import AccountForm
 from .models import Account
-from clients.models import Client 
-from transactions.models import Transaction
-from core.views import (StaffCreateView, StaffDeleteView, 
-StaffDetailView, StaffListView, StaffUpdateView, StaffDetailListView)
+from clients.models import Client
+from core.views import (StaffCreateView, StaffDeleteView,
+ StaffListView, StaffUpdateView, StaffDetailListView)
 
 
 class AccountListView(StaffListView):
-    model = Account 
+    model = Account
     context_object_name = "accounts"
 
-
-class AccountSearchView(StaffListView):
-    model = Account 
-    context_object_name = "accounts"
-    template_name = "accts/search.html"
-    
     def get_queryset(self):
         query = self.request.GET.get('q', None)
         accounts = Account.objects.all()
         if query:
             accounts = accounts.filter(
-                Q(client__last_name__startswith=query)|
-                Q(client__first_name__startswith=query)|
-                Q(number__startswith=query)|
-                Q(name__startswith=query)
+                Q(owner__last_name__startswith=query)|
+                Q(owner__first_name__startswith=query)|
+                Q(serial_number__startswith=query)
             )
-            return accounts   
-        return []
+        return accounts
+
+
+
+class AccountSearchView(StaffListView):
+    model = Account
+    context_object_name = "accounts"
+    template_name = "accts/search.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', None)
+        accounts = Account.objects.all()
+        if query:
+            accounts = accounts.filter(
+                Q(owner__last_name__istartswith=query)|
+                Q(owner__first_name__istartswith=query)|
+                Q(serial_number__istartswith=query)|
+                Q(owner__email__istartswith=query)|
+                Q(owner__telephone_number__istartswith=query)
+            )
+        return accounts
+
 
 class AccountDetailView(StaffDetailListView):
     template_name = "accts/account_detail.html"
@@ -52,9 +64,9 @@ class AccountDetailView(StaffDetailListView):
 
 
 class AccountCreateView(StaffCreateView):
-    model = Account 
+    model = Account
     form_class = AccountForm
-    
+
     def get_success_url(self):
         return reverse('accts:detail', kwargs={'pk':self.object.id})
 
@@ -65,7 +77,7 @@ class AccountCreateView(StaffCreateView):
             client = get_object_or_404(Client, pk=acc_no)
             initial['owner'] = client.id
         return initial
-    
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
         pk = self.request.GET.get('q', None)
@@ -78,13 +90,13 @@ class AccountUpdateView(StaffUpdateView):
     model = Account
     form_class = AccountForm
     template_name = "accts/account_update_form.html"
-    
+
     def get_success_url(self):
         return reverse('accts:detail', kwargs={'pk':self.object.id})
 
 
 class AccountDeleteView(StaffDeleteView):
-    model = Account 
+    model = Account
 
     def get_success_url(self):
         return reverse('clients:detail', kwargs={'pk':self.object.owner.id})

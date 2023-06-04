@@ -1,39 +1,65 @@
-{% extends './_base.html' %} 
+{% extends './_base.html' %}
 
-{% block title %} {% endblock %} 
+{% block title %} {{ client }} {% endblock %}
 
-{% block content %} 
+{% block content %}
 
+<h1 class="fw-bold">{{ client }}</h1>
+<p class="small text-muted">Created on {{ client.created }}</p>
+<hr class="my-4">
 
-<h1> {{ client }} </h1> 
-    <p><small>created on {{ client.created }}</small></p>
-    <hr class="h1">
-    <div class="hstack gap-3">
-      <div class="bg-light border border-0"><a href="{{client.get_update_url}}" class="link-dark text-decoration-none"><i title="edit {{client}}" class="bi bi-pencil-square h4"></i> Edit</a></div>
-      <div class="bg-light border border-0"><a href="{{ client.get_delete_url }}" class="link-dark text-decoration-none"><i title="delete {{client}}" class="bi bi-trash h4"></i> Delete</a></div>
+<div class="d-flex flex-row justify-content-between align-items-center mb-4">
+  <a href="{{ client.get_update_url }}" class="btn btn-outline-secondary">
+    <i class="bi bi-pencil-square me-2"></i>Edit
+  </a>
+  <a href="{% url 'accts:create' %}?q={{ client.id }}" class="btn btn-outline-primary">
+        Create Account
+      </a>
+  <a href="{{ client.get_delete_url }}" class="btn btn-outline-danger">
+    <i class="bi bi-trash me-2"></i>Delete
+  </a>
+</div>
+
+<div class="card border-0 mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4 col-md-2 fw-bold">Telephone:</div>
+      <div class="col-8 col-md-10">{{ client.telephone_number }}</div>
     </div>
-<hr>
-<div class="my-3">
-         
-    <div class="vstack gap-3">
-      <div class="bg-body-tertiary border border-0"><b>Telephone:</b> {{ client.telephone_number }}</div>
-      <div class="bg-body-tertiary border border-0"><b>email:</b>  {{ client.email }}</div>
-      <div class="bg-body-tertiary border border-0"><b>Address:</b> {{client.address }}</div>
+    <hr class="my-2">
+    <div class="row">
+      <div class="col-4 col-md-2 fw-bold">Email:</div>
+      <div class="col-8 col-md-10">{{ client.email }}</div>
     </div>
-    <hr>
- 
-    <div class="card-body">
-    
-      <h5 class="card-title">Accounts for {{ client }}</h5>
-      <ul class="list-group list-group-flush">
-        {% for account in client.accounts.all %}
-        <li class="list-group-item"> <a href="{{ account.get_absolute_url }}">{{ account.get_model_display }} - {{ account.serial_number}}</a></li>
-        {% empty %} 
-        <li class="list-group-item">No account exists for this user. Click <a href="{% url 'accts:create' %}?q={{ client.id }}">here</a> to create one.</li>
-        {% endfor %}
-      </ul>
-
+    <hr class="my-2">
+    <div class="row">
+      <div class="col-4 col-md-2 fw-bold">Address:</div>
+      <div class="col-8 col-md-10">{{ client.address }}</div>
     </div>
   </div>
+</div>
+
+<div class="card border-0">
+  <div class="card-body">
+    <h5 class="card-title fw-bold mb-4">Accounts for {{ client }}</h5>
+    {% if client.accounts.all %}
+      <ul class="list-group list-group-flush">
+        {% for account in client.accounts.all %}
+          <li class="list-group-item py-3">
+            <a href="{{ account.get_absolute_url }}" class="text-decoration-none d-flex justify-content-between align-items-center">
+              <div>{{ account.get_model_display }} - {{ account.serial_number }}</div>
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted mb-0">No accounts exist for this user.</p>
+      <a href="{% url 'accts:create' %}?q={{ client.id }}" class="btn btn-primary mt-3">
+        Create Account
+      </a>
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}

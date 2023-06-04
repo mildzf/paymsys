@@ -43,6 +43,7 @@ class PageLinksMixin:
                     'last_page_url': self.last_page(page),
                     'previous_page_url': self.previous_page(page),
                     'next_page_url': self.next_page(page),
+                    'real_item_number' : (page.number - 1) * page.paginator.per_page
              }
                 )
         return context

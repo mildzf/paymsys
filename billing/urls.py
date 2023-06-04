@@ -1,11 +1,11 @@
-from django.urls import path 
+from django.urls import path
 
-from .views import InvoicingView
+from .views import BillView
 
 app_name="billing"
 
 urlpatterns = [
-    path("new/", InvoicingView.as_view(), name="create"),
-    
-    
+    path("new/", BillView.as_view(), name="create"),
+
+
 ]
